@@ -6,7 +6,7 @@ const fs = require("fs").promises;
 const { google } = require("googleapis");
 
 const port = 8080;
-// these are the scope that we want to access 
+// scope that we need access for 
 const SCOPES = [
   "https://www.googleapis.com/auth/gmail.readonly",
   "https://www.googleapis.com/auth/gmail.send",
@@ -14,31 +14,31 @@ const SCOPES = [
   "https://mail.google.com/",
 ];
 
-// The label name for replied emails
+// label name
 const labelName = "Auto-Replied Emails";
 
 
 app.get("/", async (req, res) => {
 
-  // for google GMAIL  authentication 
+  // ensuring google GMAIL authentication 
   const auth = await authenticate({
     keyfilePath: path.join(__dirname, "credentials.json"),
     scopes: SCOPES,
   });
 
-  console.log("this is auth",auth)
+  // console.log("this is auth",auth)
 
-  // to get authorize gmail id
+  // get authorization of gmail id
   const gmail = google.gmail({ version: "v1", auth });
 
 
-  //  to finding all the labels availeble on current gmail
+  //  finding all the labels availeble on current gmail
   const response = await gmail.users.labels.list({
     userId: "me",
   });
 
 
-  //  the function to find all email that have unreplied or unseen
+  // function to find all email that have unreplied or unseen
   async function getUnrepliesMessages(auth) {
     const gmail = google.gmail({ version: "v1", auth });
     const response = await gmail.users.messages.list({
@@ -50,7 +50,7 @@ app.get("/", async (req, res) => {
     return response.data.messages || [];
   }
 
-  //  the function to generate the label ID
+  // function to generate the label ID
   async function createLabel(auth) {
     const gmail = google.gmail({ version: "v1", auth });
     try {
